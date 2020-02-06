@@ -1,5 +1,6 @@
-const isP1Turn =true;
+isP1Turn =true;
 const isOver =false;
+
 //const root = document.getElementById('root');
 const horizontalSpaces = 8;
 const veritaclSpaces =8;
@@ -12,36 +13,50 @@ const state= [
 	,[0,0,0,0,0,0,0,0,]
 	,[0,0,0,0,0,0,0,0,]
 	,[0,0,0,0,0,0,0,0,]];
-	//]
-makeAMove(3,3,1);
-makeAMove(2,5,-1);
-makeAMove(0,0,-1);
-makeAMove(0,7,-1);
-makeAMove(7,0,-1);
-makeAMove(7,7,-1);
+	
 
-// Math.floor(Math.random() * 100);
+// cyclo para jugar hasta que haya un ganador
+while (isThereAWinner()==false){
 
-// while (isThereAWinner==false){
-// 	if (isP1Turn) {
-// 		if (isTurnValid) {
-// 			makeAMove(row,column,1);
-// 			isP1Turn=true;
-// 		}
+	 if (isP1Turn==true) {
+		console.log("it is turn of player 1");
+		//var tryAgain=true;
+		// while(tryAgain=true){
+			typeOfChip=1;
+			row=Math.floor(Math.random() * 8);
+			column=Math.floor(Math.random() * 8);
+			// if(isTurnValid(row,column)){
+			// 	
+			// 	}
+			makeAMove(row,column,typeOfChip);
+			// 	tryAgain=false;
+			//}	
+			isP1Turn=false;
+	} 
+	if (isP1Turn==false){
+		console.log("it is turn of player 2");
+		//tryAgain=true;
+		//while(tryAgain=true){
+			row=Math.floor(Math.random() * 8);
+			column=Math.floor(Math.random() * 8);
+			//if(isTurnValid(row,column)){
+				makeAMove(row,column,-1);
+				//tryAgain=false;
+				isP1Turn=true;
 
-// 	} else {
-// 		if (isTurnValid) {
-// 			makeAMove(row,column,-1);
-// 			isP1Turn=false;
-// 		}
+			
+		}	
 
-// 	}
-// }
+		
+
+	}
+
+
 
 
 function makeAMove(row,column,typeOfChip){
 	state[row][column]=typeOfChip;
-	printBonito();
+	//printBonito();
 	refreshState(row, column, typeOfChip)
 	printBonito();
 }
@@ -158,16 +173,33 @@ function checkHorizontally(row,column, typeOfChip) {
 function checkDiagonally(row,column,typeOfChip){}
 
 function isTurnValid(row, column){
-	return (state[row][column]==0)? (true) : (false);
+	if (state[row][column]==0) {return true;} else{return false;}
+	//return (state[row][column]==0)? (true) : (false);
 
 }
 
 function isThereAWinner(){
 	for (i =0; i<8; i++){
 		for (j =0; j<8; j++){
+			// if (state[i][j]==1){amountOfBlackChips++; console.log("Negras: "+ amountOfBlackChips);}
+			// if (state[i][j]==-1){amountOfWhiteChips++; console.log("Blancas: "+ amountOfBlackChips);}
 			if (state[i][j]==0){return false;}
 	}
-
+	finalCount();
 	return true;
 	
+}
+}
+
+function finalCount(){
+	amountOfWhiteChips=0;
+	amountOfBlackChips=0;
+	for (i =0; i<8; i++){
+		for (j =0; j<8; j++){
+			if (state[i][j]==1){amountOfBlackChips++;}
+			if (state[i][j]==-1){amountOfWhiteChips++; }
+			
 }}
+ console.log("Negras: "+ amountOfBlackChips);
+ console.log("Blancas: "+ amountOfBlackChips);
+}
