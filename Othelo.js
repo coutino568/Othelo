@@ -1,3 +1,4 @@
+
 isP1Turn =true;
 const isOver =false;
 
@@ -15,8 +16,52 @@ const state= [
 	,[0,0,0,0,0,0,0,0,]];
 	
 
+
+setTimeout(function(){}, 500);
+function clearBoard(){
+	const mount = document.getElementById("root");
+    while (mount.firstChild) {
+    mount.firstChild.remove();
+}
+}
+
+
+
+
+
+function renderBoard(){
+//clearBoard();
+const mount = document.getElementById("root");
+const board = document.createElement('div');
+board.style.backgroundColor = 'green';
+board.style.margin='5px', 'dotted' ,'red';
+board.style.width= '600px';
+board.style.height = '600px';
+//board.style.padding='1px';
+
+	for (let i=0;i<8;i++){
+		row= document.createElement('div');
+		row.style.display = 'inline-block';
+		//row.style.padding='1px';
+		for(let j=0;j<8;j++){
+			row.appendChild(createASquare(state[i][j]));
+		}
+		board.appendChild(row);
+	}
+
+mount.appendChild(board);
+}
+
+
+
+
+
+
+
 // cyclo para jugar hasta que haya un ganador
+//es cpu vs cpu para ver el comportamiento
 while (isThereAWinner()==false){
+	renderBoard();
 
 	 if (isP1Turn==true) {
 		console.log("it is turn of player 1");
@@ -33,6 +78,7 @@ while (isThereAWinner()==false){
 			//}	
 			isP1Turn=false;
 	} 
+	renderBoard();
 	if (isP1Turn==false){
 		console.log("it is turn of player 2");
 		//tryAgain=true;
@@ -51,7 +97,44 @@ while (isThereAWinner()==false){
 
 	}
 
+function createASquare(value){
+	thisSquare = document.createElement('div');
+	thisSquare.style.width = '70px';
+	thisSquare.style.height= '70px';
+	thisSquare.style.boxSizing='border-box';
+	thisSquare.style.padding='1px';
+	thisSquare.style.borderRadius= '100px';
+	thisSquare.textContent= "";
+	switch (value){
+		case -1:
+		thisSquare.style.backgroundColor= 'white';
+		break;
+		case 0:
+		thisSquare.style.backgroundColor= 'green';
+		break;
+		case 1:
+		thisSquare.style.backgroundColor= 'black';
+	}
+	return thisSquare;
 
+}
+
+// function createASquare(value){
+// 	val thisSquare = document.createElement('div');
+// 	thisSquare.style.width = '70px';
+// 	thisSquare.style.height= '70px';
+	
+// 	switch (value){
+// 		case -1:
+// 		thisSquare.style.backgroundColor = 'white';
+// 		break;
+// 		case 0:
+// 		thisSquare.style.backgroundColor = 'white';
+// 		break;
+// 		case 1:
+// 		thisSquare.style.backgroundColor = 'white';
+// 	}
+// }
 
 
 function makeAMove(row,column,typeOfChip){

@@ -7,7 +7,7 @@ const renderLuz = ({
     luz.style.width = `${size}px`;
     luz.style.height = `${size}px`;
     luz.style.borderRadius = `${size / 2}px`;
-    luz.style.backgrouCndColor = color;
+    luz.style.backgroundColor = color;
     luz.style.opacity = isTurnedOn ? 1.0 : 0.25;
     return luz;
 }
