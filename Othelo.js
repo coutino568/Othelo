@@ -1,10 +1,8 @@
 
 isP1Turn =true;
+gameTheme=0;
 const isOver =false;
 
-//const root = document.getElementById('root');
-const horizontalSpaces = 8;
-const veritaclSpaces =8;
 //sera una matriz de 10 por 10 pero solo se renderizan las 8 casillas centrales
 const state= [
 	 [0,0,0,0,0,0,0,0,0,0]
@@ -18,8 +16,8 @@ const state= [
 	,[0,0,0,0,0,0,0,0,0,0]
 	,[0,0,0,0,0,0,0,0,0,0]];
 	
-
-
+//renderBoard();
+renderBoard();
 
 function clearBoard(){
 	const mount = document.getElementById("root");
@@ -33,9 +31,22 @@ function clearBoard(){
 
 function renderBoard(){
 clearBoard();
+
+// if (isThereAWinner()) {finalCount();}
+
 const mount = document.getElementById("root");
 const board = document.createElement('div');
-board.style.backgroundColor = 'green';
+switch(gameTheme){
+	case 0:
+	board.style.backgroundColor = 'green';
+	break;
+	case 1:
+	board.style.backgroundColor = 'black';
+	break;
+}
+if(gameTheme==0){board.style.backgroundColor = 'green';} else {
+	board.style.backgroundColor = 'black';
+}
 board.style.margin='5px', 'dotted' ,'red';
 board.style.width= '600px';
 board.style.height = '600px';
@@ -55,15 +66,26 @@ status.style.width ="600px";
 status.style.height="30px";
 status.style.textAlign="center";
 status.style.fontSize="25px";
-if (isP1Turn) {status.textContent = "Turno de las Blancas";}else{status.textContent = "Turno de las Negras";}
+if (isP1Turn) {status.textContent = (gameTheme==0)? "Turno de las Blancas": "Turno de las Rojas";}else
+{status.textContent = (gameTheme==0)?"Turno de las Negras" : "Turno de las Amarillas";}
+// boton alterna tema
+const themeButton = document.createElement('button');
+themeButton.style.width = '250px';
+themeButton.style.fontSize = '20px';
+themeButton.innerText = "Cambiar tema";
+
+themeButton.onclick = ()=> {
+	gameTheme=(gameTheme+1 )%2;
+	renderBoard();
+}
 
 mount.appendChild(status);
+mount.appendChild(themeButton);
 mount.appendChild(board);
 }
 
 
 
-renderBoard();
 
 
 function createASquare(value,row,column){
@@ -73,19 +95,21 @@ function createASquare(value,row,column){
 	thisSquare.style.fontSize = '20px';
 	thisSquare.style.boxSizing='border-box';
 	thisSquare.style.borderStyle= "solid";
+	(gameTheme==0)? thisSquare.style.borderColor="black" :thisSquare.style.borderColor="grey" ;
   	thisSquare.style.borderWidth="0.5px";
 	thisSquare.style.padding='1px';
 	thisSquare.style.borderRadius= '100px';
 	thisSquare.innerText=" ";
 	switch (value){
 		case -1:
-		thisSquare.style.backgroundColor= 'white';
+		if (gameTheme==0) {thisSquare.style.backgroundColor= 'white';}else{thisSquare.style.backgroundColor= 'red';}
 		break;
 		case 0:
-		thisSquare.style.backgroundColor= 'green';
+		if (gameTheme==0) {thisSquare.style.backgroundColor= 'green';}else{thisSquare.style.backgroundColor= 'black';}
+		
 		break;
 		case 1:
-		thisSquare.style.backgroundColor= 'black';
+		if (gameTheme==0) {thisSquare.style.backgroundColor= 'black';}else{thisSquare.style.backgroundColor= 'yellow';};
 	}
 	thisSquare.onclick = ()=> {
 		if(isTurnValid(row,column)){
@@ -101,19 +125,11 @@ function createASquare(value,row,column){
 
 
 
-
 function makeAMove(column,row,typeOfChip){
 	state[row][column]=typeOfChip;
-	//printBonito();
 	refreshState(row, column, typeOfChip);
 	if (isP1Turn) {isP1Turn=false;}else{isP1Turn=true;}
 	renderBoard();
-	if(isThereAWinner()){
-		setTimeout(function(){
-			alert("Gracias por jugar");
-		}, 2000);
-	}
-	// printBonito();
 }
 
 function refreshState(row, column, typeOfChip){
@@ -128,7 +144,10 @@ function checkVertically(row, column, typeOfChip){
 	for(a=0;a<row ; a++){
 		if(state[a][column]== typeOfChip){
 			for(m=a;m<row; m++){
-				state[m][column]=typeOfChip;
+				//solo si no estan vacias las cambia
+				if(state[m][column]!=0){
+					state[m][column]=typeOfChip;
+				}
 			}
 		}
 	}
@@ -137,7 +156,10 @@ function checkVertically(row, column, typeOfChip){
 		
 		if(state[b][column]== typeOfChip){
 			for(n=b;n>row; n--){
-				state[n][column]=typeOfChip;
+				//solo si no estan vacias , las invierte
+				if(state[n][column]!=0){
+					state[n][column]=typeOfChip;
+				}
 				}
 			}
 			
@@ -149,7 +171,10 @@ function checkHorizontally(row,column, typeOfChip) {
 	for(a=0;a<column ; a++){
 		if(state[row][a]== typeOfChip){
 			for(m=a;m<column; m++){
-				state[row][m]=typeOfChip;
+				//solo si no esta vacia las invierte
+				if(state[row][m]!=0){
+					state[row][m]=typeOfChip;
+				}
 			}
 		}
 	}
@@ -158,7 +183,10 @@ function checkHorizontally(row,column, typeOfChip) {
 		
 		if(state[row][b]== typeOfChip){
 			for(n=b;n>column; n--){
-				state[row][n]=typeOfChip;
+				//solo si no estan vacias las cambia
+				if(state[row][n]!=0){
+					state[row][n]=typeOfChip;
+				}
 				}
 			}
 			
@@ -187,14 +215,15 @@ function isTurnValid(column,row){
 }
 
 function isThereAWinner(){
+	var emptyspaces=0;
 	for (i =1; i<9; i++){
 		for (j =1; j<9; j++){
-			if (state[i][j]==0){return false;}
+			if (state[i][j]==0){				
+				emptyspaces++;
+			}
 	}
-	finalCount();
-	return true;
-	
 }
+return (emptyspaces>0)? false : true;
 }
 
 function finalCount(){
@@ -206,10 +235,9 @@ function finalCount(){
 			if (state[i][j]==-1){amountOfWhiteChips++; }
 			
 }}
- setTimeout(function(){
-			alert("HAY UN GANADOOR");
-			alert("Blancas: "+ amountOfBlackChips);
-			alert("Negras: "+ amountOfBlackChips);
-		}, 1000);
+ 
+		
+		alert("Blancas: "+ amountOfBlackChips);
+		alert("Negras: "+ amountOfBlackChips);
  
 }
