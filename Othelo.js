@@ -30,7 +30,7 @@ function clearBoard(){
 
 
 function renderBoard(){
-//clearBoard();
+clearBoard();
 const mount = document.getElementById("root");
 const board = document.createElement('div');
 board.style.backgroundColor = 'green';
@@ -44,7 +44,7 @@ board.style.height = '600px';
 		row.style.display = 'inline-block';
 		//row.style.padding='1px';
 		for(let j=0;j<8;j++){
-			row.appendChild(createASquare(state[i][j]));
+			row.appendChild(createASquare(state[i][j],j,i));
 		}
 		board.appendChild(row);
 	}
@@ -56,55 +56,58 @@ mount.appendChild(board);
 
 
 
-
+renderBoard();
 
 // cyclo para jugar hasta que haya un ganador
 //es cpu vs cpu para ver el comportamiento
-while (isThereAWinner()==false){
-	renderBoard();
+// while (isThereAWinner()==false){
+// 	renderBoard();
 
-	 if (isP1Turn==true) {
-		console.log("it is turn of player 1");
-		//var tryAgain=true;
-		// while(tryAgain=true){
-			typeOfChip=1;
-			row=Math.floor(Math.random() * 8);
-			column=Math.floor(Math.random() * 8);
-			// if(isTurnValid(row,column)){
-			// 	
-			// 	}
-			makeAMove(row,column,typeOfChip);
-			// 	tryAgain=false;
-			//}	
-			isP1Turn=false;
-	} 
-	renderBoard();
-	if (isP1Turn==false){
-		console.log("it is turn of player 2");
-		//tryAgain=true;
-		//while(tryAgain=true){
-			row=Math.floor(Math.random() * 8);
-			column=Math.floor(Math.random() * 8);
-			//if(isTurnValid(row,column)){
-				makeAMove(row,column,-1);
-				//tryAgain=false;
-				isP1Turn=true;
+// 	 if (isP1Turn==true) {
+// 		console.log("it is turn of player 1");
+// 		//var tryAgain=true;
+// 		// while(tryAgain=true){
+// 			typeOfChip=1;
+// 			row=Math.floor(Math.random() * 8);
+// 			column=Math.floor(Math.random() * 8);
+// 			// if(isTurnValid(row,column)){
+// 			// 	
+// 			// 	}
+// 			makeAMove(row,column,typeOfChip);
+// 			// 	tryAgain=false;
+// 			//}	
+// 			isP1Turn=false;
+// 	} 
+// 	renderBoard();
+// 	if (isP1Turn==false){
+// 		console.log("it is turn of player 2");
+// 		//tryAgain=true;
+// 		//while(tryAgain=true){
+// 			row=Math.floor(Math.random() * 8);
+// 			column=Math.floor(Math.random() * 8);
+// 			//if(isTurnValid(row,column)){
+// 				makeAMove(row,column,-1);
+// 				//tryAgain=false;
+// 				isP1Turn=true;
 
 			
-		}	
+// 		}	
 
 		
 
-	}
+// 	}
 
-function createASquare(value){
+function createASquare(value,row,column){
 	thisSquare = document.createElement('div');
 	thisSquare.style.width = '70px';
 	thisSquare.style.height= '70px';
+	thisSquare.style.fontSize = '20px';
 	thisSquare.style.boxSizing='border-box';
+	thisSquare.style.borderStyle= "solid";
+  	thisSquare.style.borderWidth="0.5px";
 	thisSquare.style.padding='1px';
 	thisSquare.style.borderRadius= '100px';
-	thisSquare.textContent= "";
+	thisSquare.innerText=" ";
 	switch (value){
 		case -1:
 		thisSquare.style.backgroundColor= 'white';
@@ -115,33 +118,31 @@ function createASquare(value){
 		case 1:
 		thisSquare.style.backgroundColor= 'black';
 	}
+	thisSquare.onclick = ()=> {
+		if(isTurnValid(row,column)){
+		if (isP1Turn) {makeAMove(row,column,-1);} else{makeAMove(row,column,1);} 
+		alert("me han presionado \n" + "mi fila es "+row + "\n mi columna es "+ column);
+	
+		// makeAMove(row,column,isP1Turn? -1: 1);
+		}else {
+			alert("Invalid Move");
+		}
+	}
 	return thisSquare;
 
 }
 
-// function createASquare(value){
-// 	val thisSquare = document.createElement('div');
-// 	thisSquare.style.width = '70px';
-// 	thisSquare.style.height= '70px';
-	
-// 	switch (value){
-// 		case -1:
-// 		thisSquare.style.backgroundColor = 'white';
-// 		break;
-// 		case 0:
-// 		thisSquare.style.backgroundColor = 'white';
-// 		break;
-// 		case 1:
-// 		thisSquare.style.backgroundColor = 'white';
-// 	}
-// }
 
 
-function makeAMove(row,column,typeOfChip){
+
+function makeAMove(column,row,typeOfChip){
 	state[row][column]=typeOfChip;
 	//printBonito();
-	refreshState(row, column, typeOfChip)
-	printBonito();
+	refreshState(row, column, typeOfChip);
+	
+	renderBoard();
+	if (isP1Turn) {isP1Turn=false;}else{isP1Turn=true;}
+	// printBonito();
 }
 
 
@@ -162,35 +163,7 @@ function printState(){
 	}
 
 }
-function printASpace(color){
-//debe crear caja 
-// const space = document.createElement('div');
-// space.style.whidth = 100;
-// space.style.height= 100;
 
-//dependiendo del estado , asigna el color
-	switch (color){
-		case -1:
-		// space.style.backgroundColor = white; 
-		//console.log("White");
-
-		break;
-
-		case 0:
-		// space.style.backgroundColor = lime;
-		//console.log("Empty");
-
-		break;
-
-		case 1:
-		// space.style.backgroundColor = black;
-		//console.log("Black");
-
-		break;
-
-	}
-
-}
 
 
 function printTurn(){
@@ -201,7 +174,6 @@ function refreshState(row, column, typeOfChip){
 	checkVertically(row,column,typeOfChip);
 	checkHorizontally(row,column,typeOfChip);
 	checkDiagonally(row,column,typeOfChip);
-	printState();
 
 }
 
@@ -255,7 +227,7 @@ function checkHorizontally(row,column, typeOfChip) {
 
 function checkDiagonally(row,column,typeOfChip){}
 
-function isTurnValid(row, column){
+function isTurnValid(column,row){
 	if (state[row][column]==0) {return true;} else{return false;}
 	//return (state[row][column]==0)? (true) : (false);
 
